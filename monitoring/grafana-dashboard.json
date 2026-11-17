@@ -1,0 +1,89 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "Jugadores y Espectadores Concurrentes",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rfa_active_players_total)",
+          "legendFormat": "Jugadores Activos",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rfa_active_spectators_total)",
+          "legendFormat": "Espectadores en Vivo",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "title": "Estado de Servidores en Agones Fleet",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "agones_gameservers_count{state=\"ready\"}",
+          "legendFormat": "GameServers READY (Buffer)",
+          "refId": "A"
+        },
+        {
+          "expr": "agones_gameservers_count{state=\"allocated\"}",
+          "legendFormat": "GameServers ALLOCATED",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 6 },
+      "id": 3,
+      "title": "Latencia Percentil p95 y p99 (Segundos)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(rfa_request_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p95 Latency",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(rfa_request_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p99 Latency",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 6 },
+      "id": 4,
+      "title": "Peticiones por Segundo (Throughput RPS)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(rfa_player_actions_total[1m]))",
+          "legendFormat": "Acciones de Juego / seg",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["agones", "kubernetes", "gaming", "mystic-messenger"],
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "RFA Cloud Gaming - Agones & Kubernetes Metrics",
+  "uid": "rfa-cloud-metrics"
+}

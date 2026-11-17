@@ -1,0 +1,11 @@
+# Archivo de ejemplo de variables para Terraform
+# Renombrar a terraform.tfvars y asignar tu project_id de Google Cloud
+
+project_id          = "tu-proyecto-gcp-id"
+region              = "us-central1"
+cluster_name        = "mystic-messenger-cluster"
+system_node_count   = 1
+system_machine_type = "e2-standard-2"
+min_game_nodes      = 1
+max_game_nodes      = 6
+game_machine_type   = "e2-standard-4"

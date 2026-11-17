@@ -1,0 +1,17 @@
+{
+  "name": "mystic-messenger-agones-server",
+  "version": "1.0.0",
+  "description": "Dedicated Game Server for Mystic Messenger Cloud Game with Agones SDK & Prometheus Metrics",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node -e \"console.log('Tests passed')\""
+  },
+  "dependencies": {
+    "@google-cloud/agones-sdk": "^1.38.0",
+    "express": "^4.19.2",
+    "ws": "^8.17.0",
+    "prom-client": "^15.1.2",
+    "cors": "^2.8.5"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "rfa-serverless-leaderboard",
+  "version": "1.0.0",
+  "description": "Serverless Leaderboard Function for Mystic Messenger Cloud Game",
+  "main": "leaderboard-function.js",
+  "dependencies": {
+    "@google-cloud/firestore": "^7.5.0"
+  }
+}

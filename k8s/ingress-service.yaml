@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mystic-frontend-service
+  namespace: default
+  labels:
+    app: mystic-messenger
+    component: web-frontend
+  annotations:
+    cloud.google.com/load-balancer-type: "External"
+spec:
+  type: LoadBalancer
+  selector:
+    app: mystic-messenger
+    component: web-frontend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mystic-metrics-service
+  namespace: default
+  labels:
+    app: mystic-messenger
+    tier: metrics
+spec:
+  type: ClusterIP
+  selector:
+    app: mystic-messenger
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+    protocol: TCP

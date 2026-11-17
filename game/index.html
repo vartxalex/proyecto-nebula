@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Mystic Messenger: Nebula Arena 🌌⚔️</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Contenedor Principal del Juego Arena -->
+  <div class="arena-wrapper">
+
+    <!-- HUD Superior del Jugador -->
+    <header class="arena-hud">
+      <div class="hud-left">
+        <div class="player-profile-badge">
+          <div class="char-avatar-mini" id="hud-avatar">707</div>
+          <div class="player-bars">
+            <div class="player-name-title" id="hud-name">707 (Luciel)</div>
+            <div class="bar-container hp-bar-bg">
+              <div class="bar-fill hp-fill" id="hp-bar" style="width: 100%;"></div>
+              <span class="bar-text" id="hp-text">HP: 100 / 100</span>
+            </div>
+            <div class="bar-container xp-bar-bg">
+              <div class="bar-fill xp-fill" id="xp-bar" style="width: 0%;"></div>
+              <span class="bar-text" id="xp-text">NIVEL 1 (0 / 100 XP)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-center">
+        <div class="server-node-pill" id="server-status-pill">● AGONES DEDICATED ARENA</div>
+        <div class="wave-timer-box">
+          <span class="hud-glow-label">OLEADA MINT EYE:</span>
+          <span id="wave-counter" class="hud-glow-val">1</span>
+          <span class="hud-glow-label">| TIEMPO:</span>
+          <span id="timer-counter" class="hud-glow-val">00:00</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <div class="score-box">
+          <span class="score-label">CORAZONES RFA:</span>
+          <span class="score-val" id="score-counter">0</span>
+        </div>
+        <div class="leaderboard-mini">
+          <div class="leader-title">🏆 TOP ARENA</div>
+          <ol id="mini-leaderboard">
+            <li><span>1. 707_God</span> <span>1,250</span></li>
+            <li><span>2. Jumin_Han</span> <span>980</span></li>
+            <li><span>3. Unknown</span> <span>850</span></li>
+          </ol>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas Principal de Nebula Arena -->
+    <canvas id="arena-canvas"></canvas>
+
+    <!-- Minimapa -->
+    <canvas id="minimap-canvas" width="160" height="160"></canvas>
+
+    <!-- Menú Principal / Selección de Héroe RFA -->
+    <div id="start-modal" class="arena-overlay">
+      <div class="modal-card">
+        <div class="arena-logo">
+          <span class="sub-emblem">⚡ RFA CYBERSPACE DEFENSE ⚡</span>
+          <h1>NEBULA ARENA</h1>
+          <p class="flavor-text">
+            Unknown y Mint Eye han distorsionado la nebulosa digital de la RFA con virus espaciales. 
+            Elige a tu miembro de la RFA, pilotea tu nave orbital, recolecta orbes de datos y destruye a las naves enemigas.
+          </p>
+        </div>
+
+        <div class="char-selection-title">ELIGE TU HÉROE RFA:</div>
+        <div class="hero-selector" id="hero-list">
+          <div class="hero-card active" data-hero="707">
+            <div class="hero-icon hero-707">707</div>
+            <div class="hero-name">Luciel 707</div>
+            <div class="hero-role">Hacker / Láser Rápido</div>
+            <div class="hero-stats">⚡ Cadencia: ★★★★★ | Escudo: ★★★☆☆</div>
+          </div>
+
+          <div class="hero-card" data-hero="jumin">
+            <div class="hero-icon hero-jumin">JH</div>
+            <div class="hero-name">Jumin Han</div>
+            <div class="hero-role">Defensa / Drones Gato</div>
+            <div class="hero-stats">🛡️ Escudo: ★★★★★ | Daño: ★★★★☆</div>
+          </div>
+
+          <div class="hero-card" data-hero="zen">
+            <div class="hero-icon hero-zen">ZEN</div>
+            <div class="hero-name">Zen</div>
+            <div class="hero-role">Velocidad / Ráfaga Estelar</div>
+            <div class="hero-stats">🚀 Velocidad: ★★★★★ | Rango: ★★★★☆</div>
+          </div>
+
+          <div class="hero-card" data-hero="yoosung">
+            <div class="hero-icon hero-yoosung">YSG</div>
+            <div class="hero-name">Yoosung ★</div>
+            <div class="hero-role">Gamer LOLOL / Disparo Cono</div>
+            <div class="hero-stats">🎯 Área: ★★★★★ | Crítico: ★★★★☆</div>
+          </div>
+        </div>
+
+        <div class="start-controls">
+          <input type="text" id="player-alias" placeholder="Ingresa tu Alias..." maxlength="14" value="Commander_MC">
+          <button id="btn-play-arena" class="btn-launch-arena">ENTRAR A LA NEBULA 🚀</button>
+        </div>
+
+        <div class="controls-guide">
+          <span>⌨️ <strong>WASD / Flechas:</strong> Navegación</span>
+          <span>🖱️ <strong>Mouse:</strong> Apuntar y Disparo Continuo</span>
+          <span>⚡ <strong>Espacio:</strong> Habilidad Definitiva RFA</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pantalla Game Over / Victoria -->
+    <div id="game-over-modal" class="arena-overlay hidden">
+      <div class="modal-card">
+        <h2 id="end-title" class="end-game-title">NAVE DESTRUIDA</h2>
+        <p id="end-subtitle" class="end-game-desc">Fuiste neutralizado por las fragatas de Unknown.</p>
+
+        <div class="end-stats-row">
+          <div class="stat-pill">
+            <span class="stat-label">PUNTAJE CORAZONES</span>
+            <span class="stat-value" id="final-score-val">0</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">ENEMIGOS DERROTADOS</span>
+            <span class="stat-value" id="final-kills-val">0</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">TIEMPO VIVO</span>
+            <span class="stat-value" id="final-time-val">00:00</span>
+          </div>
+        </div>
+
+        <div class="serverless-sync-box">
+          <div class="sync-title">📡 Récord sincronizado con Cloud Serverless</div>
+          <div id="end-leaderboard-list" class="end-leaderboard"></div>
+        </div>
+
+        <button id="btn-retry-arena" class="btn-launch-arena">REINICIAR BATALLA 🔄</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

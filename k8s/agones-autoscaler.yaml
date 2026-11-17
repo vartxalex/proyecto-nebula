@@ -1,0 +1,20 @@
+apiVersion: "autoscaling.agones.dev/v1"
+kind: FleetAutoscaler
+metadata:
+  name: mystic-messenger-autoscaler
+  namespace: default
+  labels:
+    app: mystic-messenger
+    role: autoscaler
+spec:
+  fleetName: mystic-messenger-fleet
+  policy:
+    type: Buffer
+    buffer:
+      bufferSize: 3          # Mantiene siempre 3 GameServers en estado READY de reserva
+      minReplicas: 3         # Mínimo de réplicas en horas valle
+      maxReplicas: 30        # Máximo de réplicas para soportar picos de 1,000+ jugadores
+  sync:
+    type: FixedInterval
+    fixedInterval:
+      seconds: 15            # Intervalo de evaluación de métricas de carga

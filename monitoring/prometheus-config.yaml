@@ -1,0 +1,35 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  # Scraping de métricas de los GameServers de Agones y Frontend
+  - job_name: 'mystic-messenger-game'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: mystic-messenger
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: "8080"
+      - target_label: __address__
+        replacement: $1:8080
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+
+  # Scraping de Agones Controller Metrics
+  - job_name: 'agones-controller'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - agones-system
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_agones_dev_role]
+        action: keep
+        regex: controller
+      - source_labels: [__meta_kubernetes_pod_container_port_name]
+        action: keep
+        regex: metrics

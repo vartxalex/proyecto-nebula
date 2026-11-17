@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentación Final: Nebula Arena en la Nube</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070913;
+      --card-bg: rgba(18, 24, 46, 0.94);
+      --accent-cyan: #00f0ff;
+      --accent-gold: #ffbe0b;
+      --accent-pink: #ff0055;
+      --accent-green: #00ffaa;
+      --text-main: #f0f4fc;
+      --text-muted: #8b99bd;
+      --border-color: #27345b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at center, #10152b 0%, #05070e 100%);
+      color: var(--text-main);
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Barra Superior */
+    .top-toolbar {
+      background: rgba(10, 14, 28, 0.95);
+      border-bottom: 2px solid var(--border-color);
+      padding: 12px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .project-header-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-icon {
+      font-size: 1.5rem;
+    }
+
+    .badge-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      letter-spacing: 0.5px;
+    }
+
+    .badge-author {
+      font-size: 0.85rem;
+      color: var(--accent-gold);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .action-btn {
+      background: #1f2a4f;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-family: 'Orbitron', sans-serif;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.15s;
+    }
+
+    .action-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      border-color: var(--accent-cyan);
+    }
+
+    /* Contenedor de Diapositivas */
+    .slides-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92%;
+      max-width: 1200px;
+      height: 84vh;
+      max-height: 720px;
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 24px;
+      box-shadow: 0 0 50px rgba(0, 240, 255, 0.15);
+      padding: 38px 48px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96) translateY(20px);
+      transition: all 0.35s ease-out;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+      z-index: 10;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+    }
+
+    .slide-step {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--accent-gold);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+    }
+
+    .slide-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.7rem;
+      color: #fff;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .slide-counter {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--accent-cyan);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .slide-body.full-width {
+      grid-template-columns: 1fr;
+    }
+
+    .slide-content-text {
+      font-size: 1rem;
+      line-height: 1.65;
+      color: #d2dcf5;
+    }
+
+    .slide-content-text ul {
+      margin-left: 20px;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .slide-content-text li strong {
+      color: var(--accent-cyan);
+    }
+
+    .slide-media-box {
+      background: #090c17;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      max-height: 420px;
+    }
+
+    .slide-media-box img {
+      width: 100%;
+      height: auto;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* Barra de Navegación Inferior */
+    .bottom-nav {
+      background: rgba(10, 14, 28, 0.95);
+      border-top: 2px solid var(--border-color);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      background: linear-gradient(135deg, #1f2a4f, #2a3a6e);
+      border: 1px solid var(--accent-cyan);
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 10px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      transform: translateY(-2px);
+    }
+
+    .slides-progress-indicators {
+      display: flex;
+      gap: 12px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #202b4d;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .dot.active {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 10px var(--accent-cyan);
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra Superior -->
+  <header class="top-toolbar">
+    <div class="project-header-badge">
+      <span class="badge-icon">🎮</span>
+      <div>
+        <div class="badge-title">NEBULA ARENA · PROYECTO FINAL</div>
+        <div class="badge-author">Expositora: <strong>Victoria Alejandra Rauda de la Torre</strong> | Cómputo en la Nube</div>
+      </div>
+    </div>
+
+    <div class="toolbar-actions">
+      <button id="btn-fullscreen" class="action-btn">PANTALLA COMPLETA ⛶</button>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal de Diapositivas -->
+  <main class="slides-wrapper">
+
+    <!-- Diapositiva 1: Portada y Caso de Estudio -->
+    <section class="slide active" data-slide="0">
+      <div class="slide-header">
+        <div>
+          <span class="slide-step">INTRODUCCIÓN</span>
+          <h1 class="slide-title">Nebula Arena: Videojuegos en la Nube</h1>
+        </div>
+        <span class="slide-counter">DIAPOSITIVA 1 / 7</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-content-text">
+          <p><strong>Despliegue, Autoescalado y Medición de Carga</strong></p>
+          <br>
+          <ul>
+            <li><strong>Estudiante:</strong> Victoria Alejandra Rauda de la Torre</li>
+            <li><strong>Materia:</strong> Cómputo en la Nube – Unidad 3</li>
+            <li><strong>Temática:</strong> Mystic Messenger: RFA Cyberspace Defense</li>
+            <li><strong>Objetivo:</strong> Demostrar cómo orquestar partidas 5 vs 5 a 20 Hz sobre <strong>Kubernetes y Agones</strong>, soportar más de 1,000 jugadores concurrentes y automatizar el ciclo de vida con <strong>Terraform</strong>.</li>
+          </ul>
+        </div>
+        <div class="slide-media-box">
+          <img src="evidencias/captura_juego_menu_seleccion.png" alt="Nebula Arena Menú">
+        </div>
+      </div>
+    </section>
+
+    <!-- Diapositiva 2: Arquitectura en la Nube -->
+    <section class="slide" data-slide="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-step">ARQUITECTURA</span>
+          <h1 class="slide-title">Arquitectura Distribuida y Tecnologías</h1>
+        </div>
+        <span class="slide-counter">DIAPOSITIVA 2 / 7</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-content-text">
+          <p><strong>Separación de Cargas Stateless vs Stateful:</strong></p>
+          <ul>
+            <li><strong>Google Kubernetes Engine (GKE):</strong> Dos Node Pools aislados. El pool de juegos autoescala de 3 a 20 nodos <code>e2-standard-4</code>.</li>
+            <li><strong>Agones Gaming Controller:</strong> Maneja servidores de juego como recursos nativos de K8s con estados <code>Ready</code>, <code>Allocated</code> y <code>Shutdown</code>.</li>
+            <li><strong>Infraestructura como Código (Terraform):</strong> Automatización de VPC, firewalls (puertos 7000–8000), GKE y Agones Helm Release.</li>
+            <li><strong>Capa Serverless (Cloud Run + Firestore):</strong> Ranking global desacoplado que escala de 0 a 50 contenedores.</li>
+          </ul>
+        </div>
+        <div class="slide-media-box">
+          <img src="evidencias/captura_terminal_kubernetes_agones.png" alt="Terminal K8s">
+        </div>
+      </div>
+    </section>
+
+    <!-- Diapositiva 3: Demostración en Vivo del Videojuego -->
+    <section class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-step">DEMO EN VIVO</span>
+          <h1 class="slide-title">Demostración en Vivo del Videojuego Web</h1>
+        </div>
+        <span class="slide-counter">DIAPOSITIVA 3 / 7</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-content-text">
+          <p><strong>Características de Nebula Arena (Mystic Messenger):</strong></p>
+          <ul>
+            <li><strong>Héroes RFA:</strong> 707 (Láser rápido), Jumin (Tanque con drones), Zen (Velocidad turbo), Yoosung (Dispersión en cono).</li>
+            <li><strong>Arena Espacial 2D:</strong> $3200 \times 3200\text{ px}$ con cámara virtual dinámica a 60 FPS.</li>
+            <li><strong>Enemigos:</strong> Drones de asalto Mint Eye y crucero Dreadnought de Unknown.</li>
+            <li><strong>Sincronización Cloud:</strong> WebSocket continuo y envío automático de récord al Leaderboard Serverless.</li>
+          </ul>
+          <br>
+          <a href="http://localhost:8080" target="_blank" style="display:inline-block; background: var(--accent-cyan); color:#000; font-family:'Orbitron'; font-weight:900; padding:12px 22px; border-radius:10px; text-decoration:none; box-shadow:0 0 15px rgba(0,240,255,0.4);">ABRIR JUEGO EN VIVO (LOCAL:8080) 🚀</a>
+        </div>
+        <div class="slide-media-box">
+          <img src="evidencias/captura_juego_arena_combate.png" alt="Nebula Arena Combate">
+        </div>
+      </div>
+    </section>
+
+    <!-- Diapositiva 4: Evidencia de Kubernetes y Agones -->
+    <section class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-step">KUBERNETES & AGONES</span>
+          <h1 class="slide-title">Orquestación de Flota con Agones</h1>
+        </div>
+        <span class="slide-counter">DIAPOSITIVA 4 / 7</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-content-text">
+          <p><strong>Gestión del Ciclo de Vida Stateful:</strong></p>
+          <ul>
+            <li><strong>Buffer del 20%:</strong> Agones mantiene siempre servidores en estado <code>Ready</code> en reserva caliente.</li>
+            <li><strong>Asignación Inmediata:</strong> El jugador entra a un servidor disponible en menos de 100 ms.</li>
+            <li><strong>Protección contra Desalojo:</strong> Los pods en estado <code>Allocated</code> no pueden ser borrados por el Cluster Autoscaler.</li>
+            <li><strong>Drenado Seguro:</strong> Las actualizaciones de imagen no cortan partidas en curso; los servidores viejos se apagan solo al terminar la sesión.</li>
+          </ul>
+        </div>
+        <div class="slide-media-box">
+          <img src="evidencias/captura_terminal_kubernetes_agones.png" alt="Terminal">
+        </div>
+      </div>
+    </section>
+
+    <!-- Diapositiva 5: Pruebas de Carga (Locust) -->
+    <section class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-step">PRUEBAS DE CARGA</span>
+          <h1 class="slide-title">1,000 Jugadores, 500 Espectadores y Extrapolación</h1>
+        </div>
+        <span class="slide-counter">DIAPOSITIVA 5 / 7</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-content-text">
+          <p><strong>Resultados Medidos con Locust:</strong></p>
+          <ul>
+            <li><strong>1,000 Jugadores Activos:</strong> 780 req/s con latencia media de 24 ms y p95 de <strong>48 ms</strong> (Meta SLA: 80 ms).</li>
+            <li><strong>Tasa de Fallos:</strong> 0.01% en rampa y 0.18% en pico de 1,000 jugadores en 20 s.</li>
+            <li><strong>Extrapolación a 20,000 Espectadores:</strong> Generan <strong>54 TB por hora</strong> (120 Gbps), demostrando que una CDN con perfiles ABR es imprescindible para mitigar el costo de Egress.</li>
+          </ul>
+        </div>
+        <div class="slide-media-box">
+          <img src="evidencias/grafica_2_escalado_agones.png" alt="Escalado Agones">
+        </div>
+      </div>
+    </section>
+
+    <!-- Diapositiva 6: Análisis de Costos y Eficiencia -->
+    <section class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-step">COSTOS & IAC</span>
+          <h1 class="slide-title">Análisis de Costos y Ciclo Terraform</h1>
+        </div>
+        <span class="slide-counter">DIAPOSITIVA 6 / 7</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-content-text">
+          <p><strong>Viabilidad Económica en Google Cloud:</strong></p>
+          <ul>
+            <li><strong>Costo por Hora (1,000 Jugadores):</strong> <strong>$2.53 USD / hora</strong> (incluyendo 10 nodos, Ingress y base de datos).</li>
+            <li><strong>Costo por Jugador por Hora:</strong> <strong>$0.0025 USD</strong> (menos de un tercio de centavo de dólar).</li>
+            <li><strong>Cero Recursos Ociosos:</strong> <code>terraform destroy</code> elimina el 100% de la infraestructura sin dejar discos o IPs huérfanas cobrando.</li>
+          </ul>
+        </div>
+        <div class="slide-media-box">
+          <img src="evidencias/captura_terraform_destroy.png" alt="Terraform Destroy">
+        </div>
+      </div>
+    </section>
+
+    <!-- Diapositiva 7: Conclusiones -->
+    <section class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-step">CONCLUSIONES</span>
+          <h1 class="slide-title">Conclusiones y Competencias Desarrolladas</h1>
+        </div>
+        <span class="slide-counter">DIAPOSITIVA 7 / 7</span>
+      </div>
+      <div class="slide-body full-width">
+        <div class="slide-content-text">
+          <ul style="font-size: 1.05rem; line-height: 1.8;">
+            <li>✅ <strong>Videojuego Web 100% Funcional:</strong> Nebula Arena con mecánicas de combate espacial y ambientación de Mystic Messenger.</li>
+            <li>✅ <strong>Infraestructura como Código:</strong> Entorno completo reproducible en minutos con Terraform.</li>
+            <li>✅ <strong>Orquestación Gaming:</strong> Flota de servidores dedicados con Agones, protección contra desalojos y rolling update con drenado.</li>
+            <li>✅ <strong>Autoescalado Validado:</strong> Reacción elástica en 3 capas probada bajo 1,000 jugadores con p95 &lt; 50 ms.</li>
+            <li>✅ <strong>Serverless y CI/CD:</strong> Leaderboard elástico y pipeline automatizado con GitHub Actions.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Barra Inferior de Navegación -->
+  <footer class="bottom-nav">
+    <button id="btn-prev" class="nav-btn">◀ ANTERIOR</button>
+    <div class="slides-progress-indicators" id="indicators">
+      <div class="dot active" onclick="goToSlide(0)"></div>
+      <div class="dot" onclick="goToSlide(1)"></div>
+      <div class="dot" onclick="goToSlide(2)"></div>
+      <div class="dot" onclick="goToSlide(3)"></div>
+      <div class="dot" onclick="goToSlide(4)"></div>
+      <div class="dot" onclick="goToSlide(5)"></div>
+      <div class="dot" onclick="goToSlide(6)"></div>
+    </div>
+    <button id="btn-next" class="nav-btn">SIGUIENTE ▶</button>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= totalSlides) index = totalSlides - 1;
+      currentSlide = index;
+
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+
+      dots.forEach((d, idx) => {
+        d.classList.toggle('active', idx === currentSlide);
+      });
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+    function goToSlide(idx) { showSlide(idx); }
+
+    document.getElementById('btn-next').addEventListener('click', nextSlide);
+    document.getElementById('btn-prev').addEventListener('click', prevSlide);
+
+    // Controles por teclado (Flechas o Barra Espaciadora)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    // Modo Pantalla Completa
+    document.getElementById('btn-fullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+apiVersion: "agones.dev/v1"
+kind: Fleet
+metadata:
+  name: mystic-messenger-fleet
+  namespace: default
+  labels:
+    app: mystic-messenger
+    component: game-server
+spec:
+  replicas: 3
+  scheduling: Packed # Optimiza uso de nodos para autoescalado eficiente
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: mystic-messenger
+        tier: game
+    spec:
+      ports:
+      - name: default
+        portPolicy: Dynamic
+        containerPort: 8080
+        protocol: TCP
+      health:
+        initialDelaySeconds: 15
+        periodSeconds: 5
+        failureThreshold: 3
+      template:
+        spec:
+          containers:
+          - name: mystic-game-container
+            image: gcr.io/mystic-messenger-cloud/game-server:v1.0.0
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: ENABLE_AGONES
+              value: "true"
+            - name: PORT
+              value: "8080"
+            resources:
+              requests:
+                memory: "128Mi"
+                cpu: "100m"
+              limits:
+                memory: "256Mi"
+                cpu: "500m"
+            livenessProbe:
+              httpGet:
+                path: /healthz
+                port: 8080
+              initialDelaySeconds: 10
+              periodSeconds: 10
+            readinessProbe:
+              httpGet:
+                path: /readyz
+                port: 8080
+              initialDelaySeconds: 5
+              periodSeconds: 5
